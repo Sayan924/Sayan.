@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Valentine 💖</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> 
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #b780ebdc; 
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+      transition: background 1.5s ease;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .rainbow-text {
+      display: inline-block;
+      animation: colorCycle 3s infinite linear;
+      font-size: 1.2em;
+    }
+
+    @keyframes colorCycle {
+      0% { color: #00ff00; }
+      25% { color: #ffff00; }
+      50% { color: #00bfff; }
+      75% { color: #ff69b4; }
+      100% { color: #00ff00; }
+    }
+
+    #page1 h1 { font-size: 28px; line-height: 1.4; }
+    #page1, #page2 { width: 100%; }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 15px 25px;
+      font-size: 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #yes { background: white; color: red; }
+    #no { background: #555; color: white; }
+
+    #page2 { display: none; }
+
+    #surpriseBtn, #waBtn {
+      background: white;
+      color: #ff2f6d;
+      padding: 14px 40px;
+      border-radius: 30px;
+      border: none;
+      font-size: 18px;
+      margin-top: 10px;
+      display: inline-block;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    #waBtn { background: #25D366; color: white; font-size: 16px; }
+
+    #secret {
+      display: none;
+      margin-top: 20px;
+      background: rgba(255,255,255,0.25);
+      padding: 25px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    #timer {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .hearts-layer, .name-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .heart, .name {
+      position: absolute;
+      bottom: -60px;
+      animation: heartFloat 5s linear forwards;
+    }
+
+    @keyframes heartFloat {
+      to { transform: translateY(-120vh); opacity: 0; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- PAGE 1 -->
+<div id="page1">
+  <h1>Will you be my Valentine? <span class="rainbow-text">❤️</span></h1>
+  <div class="buttons">
+    <button id="yes">Yes ❤️</button>
+    <button id="no">No 😜</button>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2">
+  <h1>I Love You 💘</h1>
+  <h1>Love From Sayan</h1>
+  <h1>Waiting for your Answer...</h1>
+
+  <button id="surpriseBtn">Surprise Me</button>
+
+  <div id="secret">
+    <p>💌 Counting down until Valentine’s Day 💌</p>
+    <div id="timer"></div>
+
+    <a id="waBtn"
+       href="https://wa.me/918436312171?text=Yes!%20I%20will%20be%20your%20Valentine!%20❤️✨"
+       target="_blank">
+      Reply on WhatsApp 📱
+    </a>
+  </div>
+</div>
+
+<div class="hearts-layer"></div>
+<div class="name-layer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+const page1 = document.getElementById('page1');
+const page2 = document.getElementById('page2');
+const yesBtn = document.getElementById('yes');
+const noBtn = document.getElementById('no');
+const surpriseBtn = document.getElementById('surpriseBtn');
+const secret = document.getElementById('secret');
+const timerDisplay = document.getElementById('timer');
+const heartsLayer = document.querySelector('.hearts-layer');
+const nameLayer = document.querySelector('.name-layer');
+
+const meetingDate = new Date("2026-02-14T00:00:00").getTime();
+
+/* COUNTDOWN */
+function updateTimer() {
+  const now = Date.now();
+  const diff = meetingDate - now;
+
+  if (diff <= 0) {
+    timerDisplay.innerHTML = "💖 Happy Valentine’s Day! 💖";
+    return;
+  }
+
+  const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const mins  = Math.floor((diff / (1000 * 60)) % 60);
+  const secs  = Math.floor((diff / 1000) % 60);
+
+  timerDisplay.innerHTML =
+    `⏳ ${days} days ${hours} hrs ${mins} min ${secs} sec`;
+}
+
+/* NO button escape 😜 */
+function moveNo() {
+  noBtn.style.position = 'fixed';
+  noBtn.style.left = Math.random() * 70 + 'vw';
+  noBtn.style.top  = Math.random() * 70 + 'vh';
+}
+noBtn.addEventListener('mouseover', moveNo);
+noBtn.addEventListener('touchstart', moveNo);
+
+/* Hearts */
+setInterval(() => {
+  const h = document.createElement('div');
+  h.className = 'heart';
+  h.textContent = 'Gulu❤️';
+  h.style.left = Math.random() * 100 + 'vw';
+  heartsLayer.appendChild(h);
+  setTimeout(() => h.remove(), 5000);
+}, 400);
+
+/* YES */
+yesBtn.addEventListener('click', () => {
+  confetti({ particleCount: 150, spread: 70 });
+  setTimeout(() => {
+    page1.style.display = 'none';
+    page2.style.display = 'block';
+    document.body.style.background =
+      "linear-gradient(180deg,#ff4d4d,#ff9eb8)";
+  }, 400);
+});
+
+/* SURPRISE */
+surpriseBtn.addEventListener('click', () => {
+  secret.style.display = 'block';
+  surpriseBtn.style.display = 'none';
+  updateTimer();
+  setInterval(updateTimer, 1000);
+  confetti({ particleCount: 80, spread: 90 });
+});
+</script>
+
+</body>
+</html>
